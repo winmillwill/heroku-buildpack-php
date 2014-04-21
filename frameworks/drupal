@@ -1,0 +1,31 @@
+#!/bin/bash
+
+BUILD_DIR="$2"
+basedir="$( cd -P "$( dirname "$0" )" && pwd )"
+
+function requires_drupal() {
+    jq --raw-output '.packages | .[] | .name' < "$BUILD_DIR/composer.lock" | grep -q '^drupal/drupal$'
+}
+
+function sets_framework_drupal() {
+    [ $(jq --raw-output '.extra.heroku.framework' < "$BUILD_DIR/composer.json") == "drupal" ]
+}
+
+case "$1" in
+    detect)
+        if [ ! -f "$BUILD_DIR/composer.json" ]; then
+            exit 1
+        fi
+
+        if requires_drupal || sets_framework_drupal; then
+            echo "-----> Detected Drupal app"
+            exit 0
+        else
+            exit 1
+        fi
+        ;;
+    compile)
+        echo "-----> Setting up drupal app"
+        cp "$basedir/../conf/nginx/drupal.conf.erb" "$BUILD_DIR/conf/site.conf.erb"
+        ;;
+esac

@@ -54,16 +54,18 @@ BUILDPACK_BRANCH=${BUILDPACK_BRANCH:-master}
 BUILDPACK_OWNER=$(expr "$BUILDPACK_URL" : '^.*/\(..*\)/heroku-buildpack-php' || true)
 
 if [[ "$BUILDPACK_BRANCH" != v* && "$BUILDPACK_BRANCH" != "master" ]]; then
-    BUILDPACK_BRANCH="develop"
+  BUILDPACK_BRANCH="develop"
 fi
-if [[ $S3_BUCKET = '-lang-php' ]]; then
+if [[ $S3_BUCKET = 'lang-php' ]]; then
+  S3_PREFIX=dist-${STACK}-${BUILDPACK_BRANCH}
+else
   S3_PREFIX=${S3_PREFIX:-}
 fi
 S3_BUCKET_SUBDOMAIN='s3'
 if [[ "$AWS_REGION" != 'us-east-1' ]]; then
   S3_BUCKET_SUBDOMAIN="s3-${AWS_REGION}"
 fi
-S3_URL=${https://${S3_BUCKET}.${S3_BUCKET_SUBDOMAIN}.amazonaws.com/${S3_PREFIX}}
+S3_URL=https://${S3_BUCKET}.${S3_BUCKET_SUBDOMAIN}.amazonaws.com/${S3_PREFIX}
 
 cd $BUILD_DIR
 

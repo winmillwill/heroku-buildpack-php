@@ -65,7 +65,10 @@ S3_BUCKET_SUBDOMAIN='s3'
 if [[ "$AWS_REGION" != 'us-east-1' ]]; then
   S3_BUCKET_SUBDOMAIN="s3-${AWS_REGION}"
 fi
-S3_URL=https://${S3_BUCKET}.${S3_BUCKET_SUBDOMAIN}.amazonaws.com/${S3_PREFIX}
+S3_URL=https://${S3_BUCKET}.${S3_BUCKET_SUBDOMAIN}.amazonaws.com
+if [[ -n ${S3_PREFIX} ]]
+  S3_URL=${S3_URL}/${S3_PREFIX}
+fi
 
 cd $BUILD_DIR
 

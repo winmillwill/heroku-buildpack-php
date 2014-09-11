@@ -289,7 +289,7 @@ fi
 unset COMPOSER_GITHUB_OAUTH_TOKEN
 
 # install dependencies
-composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction | indent
+composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction -vvv | indent
 
 composer show --installed heroku/heroku-buildpack-php &> /dev/null && error "Your composer.json requires package 'heroku/heroku-buildpack-php'.
 This package may only be used as a dev dependency (in 'require-dev')!"
@@ -325,7 +325,7 @@ EOF
 if [[ $engine == "hhvm" ]]; then
     cat > $BUILD_DIR/.profile.d/hhvm.sh <<"EOF"
 export PATH="$PATH:$HOME/.heroku/php/usr/bin"
-hhvm() { LD_LIBRARY_PATH=$HOME/.heroku/php/usr/lib/x86_64-linux-gnu:$HOME/.heroku/php/usr/lib/hhvm:$HOME/.heroku/php/usr/lib `which hhvm` "$@"; }
+hhvm() { LD_LIBRARY_PATH=$HOME/.heroku/php/usr/lib/x86_64-linux-gnu:$HOME/.heroku/php/usr/lib/hhvm:$HOME/.heroku/php/usr/lib `which hhvm` -v ResourceLimit.SocketDefaultTimeout=30 -v Http.SlowQueryThreshold=35000 "$@"; }
 export -f hhvm
 EOF
 fi
